@@ -72,6 +72,73 @@ As shown above, Sysmon is successfully installed.
 
 ## Step 3: Install Ubuntu Virtual Machine for Wazuh
 
+To create the Ubuntu 22.04 virtual machine instance to run Wazuh, a cloud virtual machine will be used for this project. The cloud provider that will be used is Digital Ocean. Using a compatible instance to run Wazuh is costly but if you are within your budget, it is best to use a referral link to create a Digital Ocean account and earn $200 free credits which are valid for 60 days. 
+
+Once you have set up your Digital Ocean account, to create a virtual machine, click "Droplets2 under the create section as shown below:
+
+![image](https://github.com/user-attachments/assets/03e55eb0-e75a-41e3-a120-79ffaf03705a)
+
+The next step is to choose the region in which you are based:
+
+![image](https://github.com/user-attachments/assets/c2e35c4e-9b3c-4e8c-bf10-6f79eb6eda69)
+
+The next step is to select Ubuntu as the operating system and 22.04 as the version:
+
+![image](https://github.com/user-attachments/assets/5dd46e98-2ba3-400e-8300-e2a1c71366f1)
+
+The next step is to choose "Basic" as the droplet type and then "Premium Intel" as the CPU option. To ensure that Wazuh runs smoothly on the Ubuntu VM, it would require at least 8GB RAM and 50GB storage, so select the plan that meets this requirement:
+
+![image](https://github.com/user-attachments/assets/075eed26-3403-4d7b-86e2-b75e8cb9596f)
+
+For the authentication method, you can choose either an SSH key or a password. For this project, an SSH key is chosen because they are more secure and less vulnerable to brute-force attacks. Once you have chosen SSH key as the authentication method, the next step is to set up the SSH key. To do this, you would need to create a public SSH key first. This is done by opening the terminal and running the following command:
+ssh-keygen
+
+Enter the name you want the file to be saved as. You will be prompted to enter a passphrase. You can press enter if you don't want to put a passphrase. this will generate two files which are by default called "id_rsa" and "id_rsa.pub".
+
+![image](https://github.com/user-attachments/assets/e7672455-f2e7-4492-bf5d-1cb40bd5b90a)
+
+The next step is to copy and paste the contents of the ".pub" file. To otain the contents of the file, run the following command:
+cat ~/.ssh/id_rsa.pub
+
+![image](https://github.com/user-attachments/assets/8ebe8e89-feea-4adf-be89-7736afea3498)
+
+This will show the contents which you can then copy and paste in the box under the "Add public SSH key" section as shown below:
+
+![image](https://github.com/user-attachments/assets/d67124a1-a801-4f4e-9ea8-6e489b138b51)
+
+This will create a new SSH key which you can use to connect to the Ubuntu virtual machine.
+
+In the "Finalize Details2 section, you can change the hostname of this virtual machine as you wish. Since this virtual machine is used for Wazuh, the hostname will be Wazuh. 
+
+![image](https://github.com/user-attachments/assets/425dc1c5-8111-4416-a7f6-2e8709533fed)
+
+Once this is done, you can create the droplet. The droplet will take a while to be ready.  
+
+To further secure this virtual machine, the next step is to create a firewall. To do this go to "Networking", then to the "Firewall" section, and then click "Create Firewall".
+
+Once you are on that page, choose a name for that firewall. Under the inbound rules section, choose "All TCP" as the rule type, and for sources, you can put the public IP address for the device that your are running the VM machine on. To find your public IP address, go to https://www.whatismyip.com/ and copy the public IP address.
+
+![image](https://github.com/user-attachments/assets/a7e19e3f-50a2-4a70-a4a1-3659ba21ff11)
+
+Once that is done, you can create the firewall.
+
+The next step is to go to "Droplets" and to the virtual machine that you just created. Go to the "Networking" section, then scroll all the way down to the "Firewalls". Click edit and then click the firewall you just created. Go to the "Droplets" section, click "Add Droplets", and then add the Wazuh virtual machine. 
+
+![image](https://github.com/user-attachments/assets/44ac850c-0d23-4579-914f-1ff3f0ab6a1d)
+
+The firewall can now protect the virtual machine. 
+
+
+
+## Reference
+
+
+
+
+
+
+
+
 
 
 
