@@ -95,16 +95,16 @@ ssh-keygen
 
 Enter the name you want the file to be saved as. You will be prompted to enter a passphrase. You can press enter if you don't want to put a passphrase. this will generate two files which are by default called "id_rsa" and "id_rsa.pub".
 
-![image](https://github.com/user-attachments/assets/e7672455-f2e7-4492-bf5d-1cb40bd5b90a)
+![image](https://github.com/user-attachments/assets/deaf07df-7300-45c4-9e02-9b437e00ca00)
 
-The next step is to copy and paste the contents of the ".pub" file. To otain the contents of the file, run the following command:
+The next step is to copy and paste the contents of the ".pub" file. To obtain the contents of the file, run the following command:
 cat ~/.ssh/id_rsa.pub
 
 ![image](https://github.com/user-attachments/assets/8ebe8e89-feea-4adf-be89-7736afea3498)
 
-This will show the contents which you can then copy and paste in the box under the "Add public SSH key" section as shown below:
+This will show the contents which you can then copy and paste into the box under the "Add public SSH key" section as shown below:
 
-![image](https://github.com/user-attachments/assets/d67124a1-a801-4f4e-9ea8-6e489b138b51)
+![image](https://github.com/user-attachments/assets/bb0e8056-d938-4b0b-a220-01960bead49e)
 
 This will create a new SSH key which you can use to connect to the Ubuntu virtual machine.
 
@@ -128,10 +128,87 @@ The next step is to go to "Droplets" and to the virtual machine that you just cr
 
 The firewall can now protect the virtual machine. 
 
+To access the server, you can either use the browser-based terminal found in the Droplet page or you can use SSH from your computer to connect to the virtual machine. This is done using the following command:
+ssh root@your-droplet-public-ip
+
+![image](https://github.com/user-attachments/assets/8bf62ba6-f377-407d-9e22-2607a7e7b247)
+
+Once you are connected to your virtual machine, before installing Wazuh, you will need to update and upgrade the system using the following command:
+sudo apt-get update && apt-get upgrade -y
+
+Once the system is updated and upgraded, you can now install Wazuh using the curl command from the Wazuh website:
+curl -sO https://packages.wazuh.com/4.9/wazuh-install.sh && sudo bash ./wazuh-install.sh -a
+
+Once Wazuh is installed, you will be provided with a username and password that you will use to access the web interface for Wazuh:
+
+![image](https://github.com/user-attachments/assets/b557c5ce-0d0c-4849-b0f9-cd9a4adbe76c)
+
+The Wazuh dashboard IP address is the public IP address of the virtual machine used for Wazuh. The next step is to access the Wazuh dashboard on your web browser using the link:
+https://<wazuh-dashboard-ip>:443
+
+This will direct you to the webpage which you can log in with the credentials provided:
+
+![image](https://github.com/user-attachments/assets/4b4307e0-4eaa-4420-9c66-eb95ed2466d4)
+
+Using the credentials provided upon installation, the login was successful:
+
+![image](https://github.com/user-attachments/assets/c1375bbc-ecae-4806-859f-e0cb307507e7)
+
+Wazuh is now up and running.
+
+## Step 4: Install Ubuntu Virtual Machine for TheHive
+
+The next step is to create the Ubuntu 22.04 virtual machine to run TheHive. The minimum specifications required for TheHive are 50GB storage and 8GB RAM. To make the virtual machine, follow the steps shown in step 3 until you reach the point where you have successfully logged in to the terminal to access the virtual machine. You can also name this virtual machine TheHive.
+
+Assign the same firewall that was created earlier in step 3 to this Droplet. This will protect the virtual machine running TheHive.
+
+Once that is done, you can now connect to this virtual machine instance using SSH on your terminal or the browser-based terminal found on this Droplet page.
+
+![image](https://github.com/user-attachments/assets/3f6c5072-5c5a-47a8-83f0-8f137cd99a6b)
+
+As shown above, the virtual machine has successfully been connected. The next step is to update and upgrade the system using the following command:
+sudo apt-get update && apt-get upgrade -y
+
+Before installing TheHive, you must install Java, Cassandra, and Elasticsearch.
+
+The prerequisite needs to be installed first before installing Java. This is done using the following command:
+apt install wget gnupg apt-transport-https git ca-certificates ca-certificates-java curl  software-properties-common python3-pip lsb-release
+
+Once that is installed, you can install Java using the following commands:
+wget -qO- https://apt.corretto.aws/corretto.key | sudo gpg --dearmor  -o /usr/share/keyrings/corretto.gpg
+echo "deb [signed-by=/usr/share/keyrings/corretto.gpg] https://apt.corretto.aws stable main" |  sudo tee -a /etc/apt/sources.list.d/corretto.sources.list
+sudo apt update
+sudo apt install java-common java-11-amazon-corretto-jdk
+echo JAVA_HOME="/usr/lib/jvm/java-11-amazon-corretto" | sudo tee -a /etc/environment 
+export JAVA_HOME="/usr/lib/jvm/java-11-amazon-corretto"
+
+Once Java is installed, you can install Cassandra using the following command:
+wget -qO -  https://downloads.apache.org/cassandra/KEYS | sudo gpg --dearmor  -o /usr/share/keyrings/cassandra-archive.gpg
+echo "deb [signed-by=/usr/share/keyrings/cassandra-archive.gpg] https://debian.cassandra.apache.org 40x main" |  sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
+sudo apt update
+sudo apt install cassandra
+
+Once Cassandra is installed, you can then install Elasticsearch using the following command:
+wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch |  sudo gpg --dearmor -o /usr/share/keyrings/elasticsearch-keyring.gpg
+sudo apt-get install apt-transport-https
+echo "deb [signed-by=/usr/share/keyrings/elasticsearch-keyring.gpg] https://artifacts.elastic.co/packages/7.x/apt stable main" |  sudo tee /etc/apt/sources.list.d/elastic-7.x.list
+sudo apt update
+sudo apt install elasticsearch
+
+Then finally, you can install TheHive using the following command:
+wget -O- https://raw.githubusercontent.com/StrangeBeeCorp/Security/main/PGP%20keys/packages.key | sudo gpg --dearmor -o /usr/share/keyrings/strangebee-archive-keyring.gpg
+echo 'deb [arch=all signed-by=/usr/share/keyrings/strangebee-archive-keyring.gpg] https://deb.strangebee.com thehive-5.3 main' |sudo tee -a /etc/apt/sources.list.d/strangebee.list
+sudo apt-get update
+sudo apt-get install -y thehive
+
+TheHive has now been successfully installed on this virtual machine. 
+
+
 
 
 ## Reference
-
+- https://documentation.wazuh.com/current/quickstart.html
+- https://docs.strangebee.com/thehive/installation/step-by-step-installation-guide/#configuration_1 
 
 
 
