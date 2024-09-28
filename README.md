@@ -203,6 +203,123 @@ sudo apt-get install -y thehive
 
 TheHive has now been successfully installed on this virtual machine. 
 
+## Step 5: Configure TheHive
+
+The next step is to configure TheHive. To start off, you would need to configure Cassandra first using the following command:
+sudo nano /etc/cassandra/cassandra.yaml
+
+This will open up a YAML file:
+
+![image](https://github.com/user-attachments/assets/b2cfc3e8-52b1-4b87-8561-0e2ed1bc9f16)
+
+Set the configurations to the following:
+listen_address: <public-ip-for-TheHive-server>
+rpc_address: <public-ip-for-TheHive-server> 
+seed_provider:
+    # Addresses of hosts that are deemed contact points.
+    # Cassandra nodes use this list of hosts to find each other and learn
+    # the topology of the ring.  You must change this if you are running
+    # multiple nodes!
+    - class_name: org.apache.cassandra.locator.SimpleSeedProvider
+      parameters:
+          # seeds is actually a comma-delimited list of addresses.
+          # Ex: "<ip1>,<ip2>,<ip3>"
+          - seeds: "<public-ip-for-TheHive-server>:7000"
+
+The next is to stop Cassandra, remove the old files, and then restart Cassandra using the following commands:
+sudo systemctl stop cassandra.service
+sudo rm -rf /var/lib/cassandra/*
+sudo systemctl start cassandra.service
+
+To ensure Cassandra is running, use the following command:
+sudo systemctl start cassandra.service
+
+![image](https://github.com/user-attachments/assets/76b59ce9-cbd2-4037-afd9-f661173f99fb)
+
+As shown above, Cassandra is active and running.
+
+The next step is to configure Elasticsearch using the following command:
+sudo nano /etc/elasticsearch/elasticsearch.yml
+
+Set the configurations and uncomment the following lines:
+cluster.name: thehive
+node.name: node-1
+network.host: <public-ip-for-TheHive-server>
+http.port: 9200
+cluster.initial_master_nodes: ["node-1"]
+
+Save the Elasticsearch YAML file. Start and enable Elasticsearch using the following commands:
+sudo systemctl start elasticsearch
+sudo systemctl enable elasticsearch
+
+This will create a symlink.
+
+![image](https://github.com/user-attachments/assets/59afca5c-ebc7-4f26-b400-5fc69c2f7370)
+
+You can check if Elasticsearch is running using the following command:
+sudo systemctl status elasticsearch
+
+![image](https://github.com/user-attachments/assets/550ceb31-1b51-4688-b591-4bbffbef7cc5)
+
+Before configuring TheHive configuration file, TheHive user and group need access to a certain file. To check if the user and group have access to a certain file, run the following command:
+sudo ls -la /opt/thp
+
+![image](https://github.com/user-attachments/assets/2c876592-15ed-4fcb-8e81-399bf4bc2b5f)
+
+As shown above, the root has access to the TheHive directory. This needs to be changed using the following command:
+sudo chown -R thehive:thehive /opt/thp
+
+The chown command is used to change the ownership of the file or directory. In this scenario, the ownership of the TheHive directory is being changed from root to the TheHive user and TheHive group. To check if the change has occurred, run the following command:
+sudo ls -la /opt/thp
+
+![image](https://github.com/user-attachments/assets/2cced468-cbb5-421a-abf6-92412ee7fd9a)
+
+The ownership of the TheHive directory has successfully changed to the TheHive user and the TheHive group. Because of this, TheHive configuration file can now be accessed and configured using the following command:
+sudo nano /etc/thehive/application.conf
+
+Set the configurations to the following:
+db.janusgraph {
+  storage {
+    backend = cql
+    hostname = ["<public-ip-for-TheHive-server>"]
+    # Cassandra authentication (if configured)
+    # username = "thehive"
+    # password = "password"
+    cql {
+      cluster-name = Test Cluster
+      keyspace = thehive
+    }
+  }
+  index.search {
+    backend = elasticsearch
+    hostname = ["<public-ip-for-TheHive-server>"]
+    index-name = thehive
+  }
+}
+application.baseUrl = "http://<public-ip-for-TheHive-server>:9000"
+
+The next step is to start and enable TheHive using the following commands:
+sudo systemctl start thehive
+sudo systemctl enable thehive
+
+To check if TheHive is running, run the following command:
+sudo systemctl status the hive
+
+![image](https://github.com/user-attachments/assets/1b33bf08-6a53-466f-92f9-1caad9f3a786)
+
+Since it is running, you can access TheHive on the web browser using the link "http://<public-ip-for-TheHive-server>:9000":
+
+![image](https://github.com/user-attachments/assets/122edbc6-1d05-43a4-bcc5-da5ff37b1924)
+
+The access to TheHive has been successful. You can log in using the default credentials provided:
+
+Username: admin@thehive.local
+
+Password: secret
+
+
+
+
 
 
 
