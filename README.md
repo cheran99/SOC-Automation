@@ -415,9 +415,35 @@ You can then run the following commands on Powershell (as administrator) in your
 
 Invoke-WebRequest -Uri https://packages.wazuh.com/4.x/windows/wazuh-agent-4.9.0-1.msi -OutFile ${env.tmp}\wazuh-agent; msiexec.exe /i ${env.tmp}\wazuh-agent /q WAZUH_MANAGER='64.227.35.242' WAZUH_AGENT_NAME='SOCDemo' 
 
+Once it is installed, the next step is to start the agent using the following command:
 
+NET START WazuhSvc
 
+![image](https://github.com/user-attachments/assets/58654837-aff7-4400-9ab8-16c814ba1007)
 
+The Wazuh agent has successfully started. As shown in the Wazuh dashboard, the agent is active and connected:
+
+![image](https://github.com/user-attachments/assets/34359b59-30a2-4782-ad15-8f13b6740c02)
+
+## Step 7: Generate Telemetry from Windows 10 Virtual Machine
+
+On the Windows 10 virtual machine, go to File Explorer, then to the ":C" drive, then to "Program Files (x86)", then to "ossec-agent", and open "ossec.conf" file with Notepad. This file will contain everything related to Wazuh. Copy and paste the "ossec.conf" file into the same directory to act as a backup file in case there is a mess up in the main file, you can revert the contents of it to the original state. 
+
+Once you are in the "ossec.conf" file on Notepad, scroll to the log analysis section, copy the first local file tag and paste it underneath the original:
+
+![image](https://github.com/user-attachments/assets/68d4a7a5-c2df-4770-94a5-8d73b77cbdf3)
+
+The pasted local file tag should be changed to Sysmon's channel name. You can find the channel name on Event Viewer. Go to Applications and Services > Microsoft > Windows > Sysmon and then right-click Operational and then Properties. 
+
+![image](https://github.com/user-attachments/assets/a42be533-75ab-4dc5-a824-ecf510f75722)
+
+The full name for Sysmon is the channel name. Copy the name, then go back to the configuration file and paste it to the local files tag in the place held by "Application":
+
+![image](https://github.com/user-attachments/assets/67383593-4f53-43ad-9222-b185fb91acec)
+
+You can remove the local file tags for application, security, and system to allow ingestion of logs only coming from Sysmon. Application, security, and system won't be able to forward events to the Wazuh manager. Save the file. Ensure you have administrative access in doing so. 
+
+Go to Services, and restart Wazuh. The restarting Wazuh agent is essential whenever you make any configuration changes.
 
 ## Reference
 - https://documentation.wazuh.com/current/quickstart.html
