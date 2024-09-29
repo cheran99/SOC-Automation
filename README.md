@@ -443,11 +443,145 @@ The full name for Sysmon is the channel name. Copy the name, then go back to the
 
 You can remove the local file tags for application, security, and system to allow ingestion of logs only coming from Sysmon. Application, security, and system won't be able to forward events to the Wazuh manager. Save the file. Ensure you have administrative access in doing so. 
 
-Go to Services, and restart Wazuh. The restarting Wazuh agent is essential whenever you make any configuration changes.
+Go to Services, and restart Wazuh. Restarting the Wazuh agent is essential whenever you make any configuration changes.
+
+The next step is to go to the Wazuh dashboard, and then to "Discover" under the "Explore" section:
+
+![image](https://github.com/user-attachments/assets/38e91957-31e0-4e28-8889-9dc599ed82ff)
+
+Once you are on this page, ensure that the index pattern is set at "wazuh-alerts-*". On the Dashboards Query Language (DQL) search box, enter "sysmon" so that it only shows the Sysmon events:
+
+![image](https://github.com/user-attachments/assets/b2abd700-1044-41d2-af0c-149eff37e6ac)
+
+You may not be able to see any Sysmon events immediately which is fine as it would eventually come up at some point.
+
+## Step 8: Download Mimikatz on Windows VM
+
+The next step is to download Mimikatz on the Windows 10 virtual machine. Mimikatz is an open-source tool used to extract passwords and other sensitive data from the memory of the system. Before downloading Mimikatz, the Windows Defender needs to be disabled. Alternatively, you can exclude the directory where the Mimikatz files are being saved to avoid detection from Windows Defender. 
+
+In this scenario, the directory should be excluded to avoid detection from Windows Defender. To do this, go to Windows Security on the virtual machine. Go to "Virus & threat protection", then to "Manage settings", then scroll down to "Exclusions", and click "Add or remove exclusions". You can add the Download folder as an exclusion. This is because when Mimikatz or anything else is downloaded, the downloaded items go to the Downloads folder. The Windows Defender would scan this folder and check for any malicious activity. Since the Downloads folder is added to exclusion, Windows Defender will not be able to detect anything from that folder.
+
+![image](https://github.com/user-attachments/assets/69cedb2d-7229-458d-8848-a38fb991f1b7)
+
+The next step is to download Mimikatz. Keep in mind that the web browser you use may deter you from doing this. To overcome this, use Google Chrome as the web browser to download Mimikatz. Ensure that the protection is turned off in settings. 
+
+Now go to the following link to download the ZIP file for mimikatz_trunk:
+
+https://github.com/gentilkiwi/mimikatz/releases/tag/2.2.0-20220919
+
+Once it's downloaded, go to the Downloads folder to extract the files from the Mimikatz trunk.
+
+Go to Powershell, run it as administrator, and change the directory to the Mimikatz:
+![image](https://github.com/user-attachments/assets/8109d1f6-94aa-4293-bc37-b9cf2644b210)
+
+Run the "mimikatz.exe" file using the command ".\mimikatz.exe":
+
+![image](https://github.com/user-attachments/assets/f3d178b0-cdf9-493b-b4bd-814b79600f31)
+
+As shown above, Mimikatz is running. 
+
+Go to the Wazuh dashboard and search on the DQL to see if there are any events concerning Mimikatz. 
+
+![image](https://github.com/user-attachments/assets/d243ea3c-8da3-4bae-9542-0b491983ec86)
+
+As shown above, there are no events concerning Mimikatz yet.  
+
+Go to your Wazuh Manager server, and on the terminal, copy the "ossec.conf" file and save it as a backup by running the following command:
+
+cp /var/ossec/etc/ossec.conf ~/ossec-backup.conf
+
+The next step is to edit the file using the following command:
+
+sudo nano /var/ossec/etc/ossec.conf
+
+![image](https://github.com/user-attachments/assets/9da17a9d-6dd1-48b1-ae23-6b7868998214)
+
+Right below the "alerts_log" line, the "logall" and "logall_json" lines are set at "no". Set those lines to "yes". Save the file. Restart Wazuh so that it can run with the updated configurations by running the following command:
+
+sudo systemctl restart wazuh-manager.service
+
+The restart will force Wazuh to archive all the logs and put them into a file called archives. Change the directory to the archives folder using the following command:
+
+cd /var/ossec/logs/archives/
+
+Use the "ls" command to see the files created in the archives folder:
+
+![image](https://github.com/user-attachments/assets/3e2eb249-3fe9-47b8-a8c1-f53432fcf4fe)
+
+For Wazuh to ingest the logs, the configuration needs to be changed in Filebeat using the following command:
+
+sudo nano /etc/filebeat/filebeat.yml
+
+Once you are in this file, scroll down to the "filebeat.modules" section, under "archives", and change the "enabled" value from "false" to "true":
+
+![image](https://github.com/user-attachments/assets/fa560051-6a40-49cb-a3df-b4893dc5ebfa)
+
+Save the YAML file and then restart Filebeat using the following command:
+
+sudo systemctl restart filebeat
+
+Go to the Wazuh dashboard, then to "Dashboards Management":
+
+![image](https://github.com/user-attachments/assets/ec68cdff-8bcf-48e2-8767-013823ef9198)
+
+Click on "Index Patterns". The index patterns shown are alerts, monitoring, and statistics. Create a new index for archives so that all the logs are searched regardless of whether or not Wazuh triggered the alert. 
+
+Insert the Index pattern name as shown below before proceeding to the next step:
+
+![image](https://github.com/user-attachments/assets/25b18a40-69f2-4473-ab35-6f85d156ac37)
+
+Select "timestamp" as the primary Time field and click "Create index pattern":
+
+![image](https://github.com/user-attachments/assets/21c820d3-63fb-4d02-9db4-c2ce23c0f15d)
+
+Go to "Discover" on the dashboard, and select archives as the index pattern to view the logs on. It will take a while for the events to come up in the logs. 
+
+You can check the events of the archives folder in the terminal on the Wazuh Manager server using the "ls -la" command:
+
+![image](https://github.com/user-attachments/assets/47a7d2ea-8492-4222-88b3-515302bbeaeb)
+
+You can troubleshoot using the cat command and use the grep command to search for Mimikatz events:
+
+cat archives.json | grep -i mimikatz
+
+The output did not show anything therefore there are no Mimikatz events:
+
+![image](https://github.com/user-attachments/assets/9e475e4c-f4c2-4b68-b396-3028e18ec7ee)
+
+To regenerate Mimikatz events, you will need to rerun Mimikatz on the Powershell in the Windows virtual machine:
+
+![image](https://github.com/user-attachments/assets/2466f18f-aa96-40f7-b9c3-9aa828ab7faf)
+
+Go to Event View and then to Sysmon to see if Sysmon captures Mimikatz events. Right-click on Operational under Sysmon. Filter the current log so that only Event ID number "1" is shown:
+
+![image](https://github.com/user-attachments/assets/9d1ac05a-c509-45f4-b971-1106075b7d89)
+
+This is the result:
+
+![image](https://github.com/user-attachments/assets/65e4f1ef-4300-499c-aa02-113039f95580)
+
+Select an event from the filtered results, and then go to the General section to see if Mimikatz is there:
+
+![image](https://github.com/user-attachments/assets/8ed9cb36-f7a7-48fc-8d28-64c651f9278a)
+
+As shown above, Sysmon captured a Mimikatz event. The next thing to do is to go to the Wazuh server and grep for Mimikatz using the same command as earlier:
+
+cat archives.json | grep -i mimikatz
+
+There is now some data regarding Mimikatz which are now shown:
+
+![image](https://github.com/user-attachments/assets/a041440e-e61c-4950-8c51-342b777af459)
+
+Now let's see if the Mimikatz events are shown on the Wazuh dashboard:
+
+![image](https://github.com/user-attachments/assets/4a1c662d-85b8-48df-be4a-f107c11e21a8)
+
+So far two events have been generated. This shows that Wazuh is collecting logs from events generated by Mimikatz. 
 
 ## Reference
 - https://documentation.wazuh.com/current/quickstart.html
-- https://docs.strangebee.com/thehive/installation/step-by-step-installation-guide/#configuration_1 
+- https://docs.strangebee.com/thehive/installation/step-by-step-installation-guide/#configuration_1
+- https://www.sentinelone.com/cybersecurity-101/threat-intelligence/mimikatz/#:~:text=Mimikatz%20is%20a%20tool%20that,credentials%2C%20from%20a%20system's%20memory.
 
 
 
