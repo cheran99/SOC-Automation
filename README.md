@@ -407,7 +407,13 @@ Once you have obtained the API user credentials, go to the Wazuh dashboard, then
 
 ![image](https://github.com/user-attachments/assets/27a004e6-7d69-43ad-a58a-b37eb7e75bd1)
 
-This new agent is for the Windows 10 virtual machine established in steps 1 and 2.
+This new agent is for the Windows 10 virtual machine established in steps 1 and 2. Select Windows as the package to download and install on the virtual machine. For the server address, use the public IP address for the Wazuh server. You can also assign an agent name of your choosing as shown below:
+
+![image](https://github.com/user-attachments/assets/6641ad24-4467-4a7e-b5c2-3f8938a33f49)
+
+You can then run the following commands on Powershell (as administrator) in your Windows virtual machine to install the agent:
+
+Invoke-WebRequest -Uri https://packages.wazuh.com/4.x/windows/wazuh-agent-4.9.0-1.msi -OutFile ${env.tmp}\wazuh-agent; msiexec.exe /i ${env.tmp}\wazuh-agent /q WAZUH_MANAGER='64.227.35.242' WAZUH_AGENT_NAME='SOCDemo' 
 
 
 
