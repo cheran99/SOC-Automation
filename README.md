@@ -642,6 +642,22 @@ As shown in the figure above, running Mimikatz even under a different name gener
 
 The reason why the alert was generated despite the name change is that in the rule created earlier in step 9, the rule looks at the ".originalFileName" field value and not the ".image" field value so whenever you run Mimikatz, no matter how many times you change the name of Mimikatz file and run it, it will always generate an alert that there is Mimikatz usage. If the rule was looking at the ".image" field and not the ".originalFileName" field, the alert would not have been generated therefore Mimikatz would not be detected on the Wazuh dashboard. 
 
+## Step 11: Set Up Shuffle 
+
+Shuffle is an open-source Security Orchestration, Automation and Response (SOAR) platform. It can efficiently automate, report, share and articulate any information. The automation is available through existing standards like OpenAPI.
+
+The first step is to create a Shuffle account on the Shuffle website. Once you have created the account, go to workflows:
+
+![image](https://github.com/user-attachments/assets/40002e67-3ada-401f-98e7-7a909c2e3656)
+
+This is where you will create a workflow for the SOC automation. Click "New Workflow" to create the workflow:
+
+![image](https://github.com/user-attachments/assets/ff0334f5-e207-496a-9cd2-0b9f3a3f8614)
+
+Give a name to the workflow and for "Usecases", you can select anything from the list. 
+
+
+
 
 
 
@@ -650,6 +666,7 @@ The reason why the alert was generated despite the name change is that in the ru
 - https://documentation.wazuh.com/current/quickstart.html
 - https://docs.strangebee.com/thehive/installation/step-by-step-installation-guide/#configuration_1
 - https://www.sentinelone.com/cybersecurity-101/threat-intelligence/mimikatz/#:~:text=Mimikatz%20is%20a%20tool%20that,credentials%2C%20from%20a%20system's%20memory.
+- https://medium.com/shuffle-automation/introducing-shuffle-an-open-source-soar-platform-part-1-58a529de7d12
 
 
 
