@@ -469,7 +469,7 @@ Now go to the following link to download the ZIP file for mimikatz_trunk:
 
 https://github.com/gentilkiwi/mimikatz/releases/tag/2.2.0-20220919
 
-Once it's downloaded, go to the Downloads folder to extract the files from the Mimikatz trunk.
+Once downloaded, go to the Downloads folder to extract the files from the Mimikatz trunk.
 
 Go to Powershell, run it as administrator, and change the directory to the Mimikatz:
 ![image](https://github.com/user-attachments/assets/8109d1f6-94aa-4293-bc37-b9cf2644b210)
@@ -621,6 +621,29 @@ type = "pcre2">(?i)mimikatz\.exe
 ![image](https://github.com/user-attachments/assets/99baeab5-d0b6-489a-99de-e71eeec485e6)
 
 Save the file and restart the Manager for the change to take place.
+
+## Step 10: Testing The Rules
+
+The next step is to test the rule. To do this, let's rename the Mimikatz file to see if the rule will still generate an alert regarding Mimikatz despite the name change:
+
+![image](https://github.com/user-attachments/assets/db54adc4-5d41-4aa3-a3dd-abcab293d0cd)
+
+Now let's run the renamed file on Powershell:
+
+![image](https://github.com/user-attachments/assets/144b62e5-9b84-4119-856a-35deec6dfc5c)
+
+Now let's check the Wazuh dashboard to see if this generated the alert:
+
+![image](https://github.com/user-attachments/assets/058bec33-9678-4b06-b262-98fcbd29c8aa)
+
+As shown in the figure above, running Mimikatz even under a different name generated an alert on the Wazih dashboard that shows Mimikatz is in use. The same log also had the rule description that says "Mimikatz Usage Detected":
+
+![image](https://github.com/user-attachments/assets/19e45745-d1ba-44fa-ac26-21f6a77f104c)
+
+The reason why the alert was generated despite the name change is that in the rule created earlier in step 9, the rule looks at the ".originalFileName" field value and not the ".image" field value so whenever you run Mimikatz, no matter how many times you change the name of Mimikatz file and run it, it will always generate an alert that there is Mimikatz usage. If the rule was looking at the ".image" field and not the ".originalFileName" field, the alert would not have been generated therefore Mimikatz would not be detected on the Wazuh dashboard. 
+
+
+
 
 
 ## Reference
