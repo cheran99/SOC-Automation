@@ -656,6 +656,37 @@ This is where you will create a workflow for the SOC automation. Click "New Work
 
 Give a name to the workflow and for "Usecases", you can select anything from the list. 
 
+Click save and this will create a page where you can drag and drop components to your workflow. For the "Change Me" component, go to the Call section and remove the "Hello World" text. Then click the "+" and select "Execution Argument". It should look something like this:
+
+![image](https://github.com/user-attachments/assets/b652bf3c-0cfb-42c1-bc23-74d89345494b)
+
+Drag "Webhook" to the workflow and name it "Wazuh-Alerts". Copy the Webhook URI which will be added to the "ossec.conf" file on the Wazuh Manager:
+
+![image](https://github.com/user-attachments/assets/0227d1a0-2149-4acf-afc4-8f34b794f68f)
+
+Once you have copied the Webhook URI, go to the Wazuh server and open the "ossec.conf" file using the following command:
+
+sudo nano /var/ossec/etc/ossec.conf
+
+Once the file is opened, scroll down to the area right below "global" but above "alerts" and add the following integration with the Webhook URI that you just copied:
+
+  <integration>
+    <name>shuffle</name>
+    <hook_url> webhool-uri </hook_url>
+    <rule_id>100002</rule_id>
+    <alert_format>json</alert_format>
+  </integration>
+
+It should look something like this:
+
+![image](https://github.com/user-attachments/assets/23aba323-2e31-480e-9b45-7f2032409db0)
+
+Save the file and restart Wazuh Manager using the the command:
+
+sudo systemctl restart wazuh-manager.service
+
+Ensure that the Wazuh Manager is running.
+
 
 
 
