@@ -72,7 +72,7 @@ To check if Sysmon is installed on the mvirtual machine, go to start, search for
 
 As shown above, Sysmon is successfully installed. 
 
-## Step 3: Install Ubuntu Virtual Machine for Wazuh
+### Step 3: Install Ubuntu Virtual Machine for Wazuh
 
 To create the Ubuntu 22.04 virtual machine instance to run Wazuh, a cloud virtual machine will be used for this project. The cloud provider that will be used is Digital Ocean. Using a compatible instance to run Wazuh is costly but if you are within your budget, it is best to use a referral link to create a Digital Ocean account and earn $200 free credits which are valid for 60 days. 
 
@@ -163,7 +163,7 @@ Using the credentials provided upon installation, the login was successful:
 
 Wazuh is now up and running.
 
-## Step 4: Install Ubuntu Virtual Machine for TheHive
+### Step 4: Install Ubuntu Virtual Machine for TheHive
 
 The next step is to create the Ubuntu 22.04 virtual machine to run TheHive. The minimum specifications required for TheHive are 50GB storage and 8GB RAM. To make the virtual machine, follow the steps shown in step 3 until you reach the point where you have successfully logged in to the terminal to access the virtual machine. You can also name this virtual machine TheHive.
 
@@ -231,7 +231,7 @@ sudo apt-get install -y thehive
 
 TheHive has now been successfully installed on this virtual machine. 
 
-## Step 5: Configure TheHive
+### Step 5: Configure TheHive
 
 The next step is to configure TheHive. To start off, you would need to configure Cassandra first using the following command:
 
@@ -375,7 +375,7 @@ This will open up a file where you can add the configurations that instruct Elas
 
 Once you have set up the configurations as shown above, you can save that file and restart Cassandra, Elasticsearch, and TheHive. By doing this, you should be able to successfully log on to the TheHive dashboard. This configuration is only essential if Elasticsearch has failed to start otherwise, there is no need to do the configurations. 
 
-## Step 6: Configure Wazuh
+### Step 6: Configure Wazuh
 
 The next step is to configure Wazuh. To do this log in to the Wazuh dashboard on your web browser using the link "https://<wazuh-dashboard-ip>:443" and the credentials provided upon installation.
 
@@ -425,7 +425,7 @@ The Wazuh agent has successfully started. As shown in the Wazuh dashboard, the a
 
 ![image](https://github.com/user-attachments/assets/34359b59-30a2-4782-ad15-8f13b6740c02)
 
-## Step 7: Generate Telemetry from Windows 10 Virtual Machine
+### Step 7: Generate Telemetry from Windows 10 Virtual Machine
 
 On the Windows 10 virtual machine, go to File Explorer, then to the ":C" drive, then to "Program Files (x86)", then to "ossec-agent", and open "ossec.conf" file with Notepad. This file will contain everything related to Wazuh. Copy and paste the "ossec.conf" file into the same directory to act as a backup file in case there is a mess up in the main file, you can revert the contents of it to the original state. 
 
@@ -455,7 +455,7 @@ Once you are on this page, ensure that the index pattern is set at "wazuh-alerts
 
 You may not be able to see any Sysmon events immediately which is fine as it would eventually come up at some point.
 
-## Step 8: Download Mimikatz on Windows VM
+### Step 8: Download Mimikatz on Windows VM
 
 The next step is to download Mimikatz on the Windows 10 virtual machine. Mimikatz is an open-source tool used to extract passwords and other sensitive data from the memory of the system. Before downloading Mimikatz, the Windows Defender needs to be disabled. Alternatively, you can exclude the directory where the Mimikatz files are being saved to avoid detection from Windows Defender. 
 
@@ -584,7 +584,7 @@ When you expand the event on the dashboard, you can see the fields and for "mimi
 
 Using the ".originalFileName" field, a rule is going to be created so that the alert is generated even if the attacker changes the name of the Mimikatz file to something else.  
 
-## Step 9: Create Rules
+### Step 9: Create Rules
 
 On the Wazuh dashboard, go to "Rules" under "Server management":
 
@@ -622,7 +622,7 @@ type = "pcre2">(?i)mimikatz\.exe
 
 Save the file and restart the Manager for the change to take place.
 
-## Step 10: Testing The Rules
+### Step 10: Testing The Rules
 
 The next step is to test the rule. To do this, let's rename the Mimikatz file to see if the rule will still generate an alert regarding Mimikatz despite the name change:
 
@@ -642,7 +642,7 @@ As shown in the figure above, running Mimikatz even under a different name gener
 
 The reason why the alert was generated despite the name change is that in the rule created earlier in step 9, the rule looks at the ".originalFileName" field value and not the ".image" field value so whenever you run Mimikatz, no matter how many times you change the name of Mimikatz file and run it, it will always generate an alert that there is Mimikatz usage. If the rule was looking at the ".image" field and not the ".originalFileName" field, the alert would not have been generated therefore Mimikatz would not be detected on the Wazuh dashboard. 
 
-## Step 11: Set Up Shuffle 
+### Step 11: Set Up Shuffle 
 
 Shuffle is an open-source Security Orchestration, Automation and Response (SOAR) platform. It can efficiently automate, report, share and articulate any information. The automation is available through existing standards like OpenAPI.
 
@@ -703,7 +703,26 @@ Select the result and expand the execution argument for more details:
 
 ![image](https://github.com/user-attachments/assets/008e319d-e76a-4772-a288-7ab5a4cb3c71)
 
-As shown above, the "Execution Argument shows all the information generated by the Wazuh Manager. 
+As shown above, the "Execution Argument" shows all the information generated by the Wazuh Manager. 
+
+### Step 12: Establishing a Workflow
+
+As shown in the diagram in the Set Up section, the workflow should be:
+- Mimikatz Alert generated by the Wazuh Manager should be sent to Shuffle
+- The Mimikatz Alert is received and Shuffle should extract the file hash from the file
+- The reputation score for the hash value should be checked using VirusTotal
+- The details should be sent to TheHive to create the alert
+- An email regarding the alert should be sent to the SOC Analyst so that an investigation can be conducted
+
+The "Execution Argument" details from the result shown at the end of step 11 show the return values for the hashes is appended by SHA1=hash value:
+
+![image](https://github.com/user-attachments/assets/e60df5be-7af9-47ee-92bd-a2aa780e1819)
+
+To automate this and for VirusTotal to check the reputation score, the hash value must be sent to VirusTotal. To do this, go to the workflow on Shuffle, and click the "Change Me" icon. For "Find Actions", change it to "Regex capture group". For "Input Data", select "Execution Argument" and within that section, "hashes". 
+
+
+  
+
 
 
 
