@@ -718,10 +718,51 @@ The "Execution Argument" details from the result shown at the end of step 11 sho
 
 ![image](https://github.com/user-attachments/assets/e60df5be-7af9-47ee-92bd-a2aa780e1819)
 
-To automate this and for VirusTotal to check the reputation score, the hash value must be sent to VirusTotal. To do this, go to the workflow on Shuffle, and click the "Change Me" icon. For "Find Actions", change it to "Regex capture group". For "Input Data", select "Execution Argument" and within that section, "hashes". 
+To automate this and for VirusTotal to check the reputation score, the hash value must be sent to VirusTotal. To do this, go to the workflow on Shuffle, and click the "Change Me" icon. For "Find Actions", change it to "Regex capture group". For "Input Data", select "Execution Argument" and within that section, select "hashes":
 
+![image](https://github.com/user-attachments/assets/06c7f0de-38ab-4f83-8718-b3213596464e)
 
-  
+Under the Regex section, write a text that parses the SHA256 value. You can use ChatGPT as guidance to create a text for this:
+
+![image](https://github.com/user-attachments/assets/4466a480-7485-4a7d-bee0-ea51029edaea)
+
+This gives you the regex text which you can add under the regex section in "Change Me":
+
+![image](https://github.com/user-attachments/assets/a74f2d06-7052-4691-b833-a41e78020473)
+
+Click on the person icon to test the workflow again. Check the results for "Change Me" and you can see "SHA256" has been parsed out:
+
+![image](https://github.com/user-attachments/assets/a4fe5843-013d-48f6-a265-996770010064)
+
+Rename the "Change Me" icon to "Sha256_Regex":
+
+![image](https://github.com/user-attachments/assets/5d41d832-223c-466f-88ea-553016728234)
+
+The API key needs to be obtained to implement VirusTotal into the shuffle workflow to check the hashes and return the values automatically. To do this, an account on VirusTotal needs to be created. You can go on the VirusTotal website to sign up for an account and obtain the API key:
+
+![image](https://github.com/user-attachments/assets/e2614dc4-1494-4aa9-ae05-de3ba2a25af1)
+
+Once you have created the VirusTotal account, you can then obtain the API key:
+
+![image](https://github.com/user-attachments/assets/7407d3ce-c87b-424d-823b-ae0c2c118d24)
+
+Once you have obtained the API key, return to Shuffle and look for VirusTotal on the active apps. Select the app to activate it. Once it is activated, drag the VirusTotal app to the workflow:
+
+![image](https://github.com/user-attachments/assets/c98f523a-4fc1-4d86-a42e-27f27ad71779)
+
+Click on the VirusTotal icon. Change the name to VirusTotal and for "Find Actions", select "Get a hash report":
+
+![image](https://github.com/user-attachments/assets/3a05e946-0a89-485f-9cbf-2ed946457fde)
+
+Next, click "AUTHENCIATE VIRUSTOTAL V3" and insert the API key that you obtained from VirusTotal:
+
+![image](https://github.com/user-attachments/assets/3bfa9ed2-1518-404e-8079-183b544bada5)
+
+Next, under the "Id" section, click on the "+" button and select the regex output for list:
+
+![image](https://github.com/user-attachments/assets/d8cd07c7-2f14-49f0-ab2a-f05f78e0ef20)
+
+Save the workflow. Click the person icon and select the Webhook workflow to rerun it. This will produce VirusTotal's output:
 
 
 
