@@ -808,13 +808,25 @@ Return to Shuffle, click the TheHive icon and add authentication. Use the API ke
 
 ![image](https://github.com/user-attachments/assets/1a35bd96-0543-45e4-8285-54c483f74bad)
 
-Under the "Find Actions", select "Create alert". Before filling in the "Body" section, connect the TheHive icon to the rest of the workflow. You can connect the TheHive icon to the VirusTotal icon. By doing this, TheHive can look into the Wazuh alerts:
+Under the "Find Actions", select "Create alert". Before filling in the rest of the section, connect the TheHive icon to the rest of the workflow. You can connect the TheHive icon to the VirusTotal icon. By doing this, TheHive can look into the Wazuh alerts:
 
 ![image](https://github.com/user-attachments/assets/89888ce0-3a9d-445d-82f3-1d82b03b444f)
 
-Return to the TheHive icon, and under the "Body" section, add the following configurations:
+Return to the TheHive icon, and add the following under each section:
 
-![image](https://github.com/user-attachments/assets/3cd2e7ac-cc28-45c8-ac72-44b50c951919)
+- Title: $exec.title
+- Tags: [*T1003*]
+- Summary: Mimikatz activity detection on host: $exec.text.win.system.computer and the process ID is: $exec.text.win.system.processID and the command line is: $exec.text.win.eventdata.commandLine
+- Severity: 2
+- Type: Internal
+- Tlp: 2
+- Status: New
+- Sourceref: "Rule: 100002"
+- Source: Wazuh
+- Pap: 2
+- Flag: false
+- Description: Mimikatz Detected on host: $exec.text.win.system.computer from user: $exec.text.win.eventdata.user
+
 
 Next, go to Digital Ocean and then to the custom firewall that you created earlier:
 
