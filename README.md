@@ -734,7 +734,7 @@ Click on the person icon to test the workflow again. Check the results for "Chan
 
 ![image](https://github.com/user-attachments/assets/a4fe5843-013d-48f6-a265-996770010064)
 
-Rename the "Change Me" icon to "Sha256_Regex":
+Rename the "Change Me" icon to "SHA256_Regex":
 
 ![image](https://github.com/user-attachments/assets/5d41d832-223c-466f-88ea-553016728234)
 
@@ -758,11 +758,73 @@ Next, click "AUTHENCIATE VIRUSTOTAL V3" and insert the API key that you obtained
 
 ![image](https://github.com/user-attachments/assets/3bfa9ed2-1518-404e-8079-183b544bada5)
 
-Next, under the "Id" section, click on the "+" button and select the regex output for list:
+Next, under the "Id" section, click on the "+" button and select the regex output for the list:
 
 ![image](https://github.com/user-attachments/assets/d8cd07c7-2f14-49f0-ab2a-f05f78e0ef20)
 
 Save the workflow. Click the person icon and select the Webhook workflow to rerun it. This will produce VirusTotal's output:
+
+![image](https://github.com/user-attachments/assets/2e7509db-2e0b-43ec-801c-4e8ebf17b992)
+
+As shown above, under the "last_analysis_stats", 65 scanners have detected the file as malicious. This shows that VirusTotal is working and can automatically check the hashes and return the values.  
+
+Next, add TheHive to the workflow. Just like with VirusTotal, you can find the TheHive app, activate it, and drag it to the workflow:
+
+![image](https://github.com/user-attachments/assets/c34faffb-4837-411e-943e-9e6bc85bb75a)
+
+Click on the TheHive icon. To authenticate TheHive, you would need to obtain the API key. You can do this by logging in to the TheHive dashboard using the default credentials. Once you are logged in, click on the top right corner and then "Settings". Go to the "API Key" section and create an API key:
+
+![image](https://github.com/user-attachments/assets/7113b7fa-1a8f-462e-b367-37981a892461)
+
+Once you have obtained the API key, go to the TheHive app on Shuffle and then insert the API key. Insert the link to your TheHive dashboard:
+
+![image](https://github.com/user-attachments/assets/aa683ce8-c052-4448-8eec-7a264c85fe6f)
+
+Next, go to the TheHive dashboard, click the "+" icon to add an organisation. Fill in the name and description and then confirm it:
+
+![image](https://github.com/user-attachments/assets/301a2f6b-b617-4a35-bb97-564bb847b0a2)
+
+Click the created organisation and add two users. For the first user, the type should be "Normal". For "Login", you can insert "socdemo@test.com", and for "Name", you can put "SOC Demo". For "Profile", you can set this to "analyst":
+
+![image](https://github.com/user-attachments/assets/8d7c8930-0f70-45bb-9376-072326293303)
+
+For the second user, select "Service" as the type. For "Login", you insert "shuffle@test.com", and for "Name", you can put "SOAR". For "Profile", you can set this to "analyst":
+
+![image](https://github.com/user-attachments/assets/1f1ba7bc-1b2c-415a-9f80-49f70b1a9b16)
+
+For the "SOC Demo" user, you would want to create a password for it:
+
+![image](https://github.com/user-attachments/assets/29583ed3-0bb0-4cf2-8761-28e03c1c434c)
+
+For the "SOAR" user, you would need to create an API key which you should save somewhere so that it can be used to authenticate Shuffle. 
+
+You can then log in to the TheHive dashboard using the "SOC Demo" user account:
+
+![image](https://github.com/user-attachments/assets/2495d6c2-eb80-44af-8e5f-dd38a646cf59)
+
+This will take you to the case page. 
+
+Return to Shuffle, click the TheHive icon and add authentication. Use the API key for the "SOAR" account and the link to your TheHive dashboard:
+
+![image](https://github.com/user-attachments/assets/1a35bd96-0543-45e4-8285-54c483f74bad)
+
+Under the "Find Actions", select "Create alert". Before filling in the "Body" section, connect the TheHive icon to the rest of the workflow. You can connect the TheHive icon to the VirusTotal icon. By doing this, TheHive can look into the Wazuh alerts:
+
+![image](https://github.com/user-attachments/assets/89888ce0-3a9d-445d-82f3-1d82b03b444f)
+
+Return to the TheHive icon, and under the "Body" section, add the following configurations:
+
+![image](https://github.com/user-attachments/assets/3cd2e7ac-cc28-45c8-ac72-44b50c951919)
+
+Next, go to Digital Ocean and then to the custom firewall that you created earlier:
+
+![image](https://github.com/user-attachments/assets/ba8e2005-9398-4dc3-992d-fc3878eb3bd3)
+
+
+Add a new rule with "Custom" as the "Type", "TCP" as the "Protocol", and "Port Range" as "9000". As for the "Sources", this will only be "All IPv4": 
+
+![image](https://github.com/user-attachments/assets/b1fafd20-be9a-4408-8267-4cdf03720aca)
+
 
 
 
