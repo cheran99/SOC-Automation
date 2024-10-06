@@ -815,7 +815,7 @@ Under the "Find Actions", select "Create alert". Before filling in the rest of t
 Return to the TheHive icon, and add the following under each section:
 
 - Title: $exec.title
-- Tags: [*T1003*]
+- Tags: ["T1003"]
 - Summary: Mimikatz activity detection on host: $exec.text.win.system.computer and the process ID is: $exec.text.win.system.processID and the command line is: $exec.text.win.eventdata.commandLine
 - Severity: 2
 - Type: Internal
@@ -837,7 +837,39 @@ Add a new rule with "Custom" as the "Type", "TCP" as the "Protocol", and "Port R
 
 ![image](https://github.com/user-attachments/assets/54c148b4-a634-48b8-8f71-427d8cea9531)
 
+Return to Shuffle, go to the person icon and rerun the workflow:
 
+![image](https://github.com/user-attachments/assets/206863c0-28b2-4522-abbd-a54307209bfa)
+
+The figure above shows that TheHive was successful in the workflow and as a result, this automatically generated an alert on the TheHive dashboard:
+
+![image](https://github.com/user-attachments/assets/cc762eac-0d15-470b-9c83-5d2fd2b25db8)
+
+When you click on the alert for more details, you can see the output is based on the input values from TheHive on the Shuffle workflow. The alert also shows that the "SOAR" user account created it thanks to its API key being used for authentication on Shuffle:  
+
+![image](https://github.com/user-attachments/assets/d2972132-34dd-48e1-98a1-f2221013cf7b)
+
+The next step is to set up an email that will be sent to the SOC analyst to review the alert and conduct an investigation. To do this, the email app should be added to the Shuffle workflow and it should be connected to VirusTotal:
+
+![image](https://github.com/user-attachments/assets/0b2b2b2e-ea25-446f-a491-6d47dd3059bb)
+
+Click on the "Email" icon, and add a valid email address to the "Recipient" section. For the "Subject" and "Body" sections, add:
+
+- Subject: "Mimikatz Detected!"
+- Body:
+  - Time: $exec.text.win.eventdata.utcTime
+  - Title: $exec.title
+  - Host: $exec.text.win.system.computer
+ 
+![image](https://github.com/user-attachments/assets/0013463f-d275-4d36-b94b-987698bb4a53)
+
+Save the workflow, and click on the person icon to rerun it. This successfully sent an email to the recipient:
+
+![image](https://github.com/user-attachments/assets/a2c85c37-27a4-458d-a610-9c9b49c70368)
+
+When you run Mimikatz on the Windows virtual machine a few more times, this creates alerts which are then sent as emails to the SOC analyst:
+
+![image](https://github.com/user-attachments/assets/f277d327-8d5d-4db7-9134-dc0f4c219c79)
 
 
 
