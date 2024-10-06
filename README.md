@@ -878,6 +878,12 @@ When you run Mimikatz on the Windows virtual machine a few more times, this crea
 - https://docs.strangebee.com/thehive/installation/step-by-step-installation-guide/#configuration_1
 - https://www.sentinelone.com/cybersecurity-101/threat-intelligence/mimikatz/#:~:text=Mimikatz%20is%20a%20tool%20that,credentials%2C%20from%20a%20system's%20memory.
 - https://medium.com/shuffle-automation/introducing-shuffle-an-open-source-soar-platform-part-1-58a529de7d12
+- https://youtu.be/Lb_ukgtYK_U?si=LGXLsqNHK_EE50CM
+- https://youtu.be/XR3eamn8ydQ?si=jyTYZ57wcV1Rp23d
+- https://youtu.be/YxpUx0czgx4?si=v1qnIqgtteZd8Qr1
+- https://youtu.be/VuSKMPRXN1M?si=hLY-DjfbFJf1WgnM
+- https://youtu.be/amTtlN3uvFU?si=xlA2kcj136HGyaxE
+- https://youtu.be/GNXK00QapjQ?si=rtGBIr1WLdBqMQbc
 
 
 
