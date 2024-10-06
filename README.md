@@ -835,7 +835,7 @@ Next, go to Digital Ocean and then to the custom firewall that you created earli
 
 Add a new rule with "Custom" as the "Type", "TCP" as the "Protocol", and "Port Range" as "9000". As for the "Sources", this will only be "All IPv4": 
 
-![image](https://github.com/user-attachments/assets/b1fafd20-be9a-4408-8267-4cdf03720aca)
+![image](https://github.com/user-attachments/assets/54c148b4-a634-48b8-8f71-427d8cea9531)
 
 
 
