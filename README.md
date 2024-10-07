@@ -867,9 +867,74 @@ Save the workflow, and click on the person icon to rerun it. This successfully s
 
 ![image](https://github.com/user-attachments/assets/a2c85c37-27a4-458d-a610-9c9b49c70368)
 
-When you run Mimikatz on the Windows virtual machine a few more times, this creates alerts which are then sent as emails to the SOC analyst:
+When you run Mimikatz on the Windows virtual machine a few more times, this creates more alerts which are then sent as emails to the SOC analyst:
 
 ![image](https://github.com/user-attachments/assets/f277d327-8d5d-4db7-9134-dc0f4c219c79)
+
+This shows that the automation was successful. When you run Mimikatz on the Windows virtual machine, an alert is created for the Wazuh Manager. The hash is automatically extracted from the alert file and sent over to VirusTotal to check the reputation score. Once checked, VirusTotal returns the hash value and sends the information to both TheHive as an alert, and to the SOC analyst as an email for investigation.
+
+### Step 13: Implement Another Wazuh Agent to Shuffle
+
+Since the automation in the previous steps was successful when it came to running Mimikatz, in this step, another virtual machine is going to be implemented to act as a Wazuh agent to generate alerts that detect any brute force activity through SSH from all inbound traffic. The user input will also be implemented so that the user has the option to block the source IP. The virtual machine used in this are the following:
+
+- Operating system: Ubuntu 22.04
+- Memory: 1GB
+- Storage: 50GB
+
+Digital Ocean will be used to implement another Droplet for this purpose. Unlike the previous Droplets, this Droplet will allow all inbound traffic. Follow the same steps shown in steps 3 and 4 in terms of creating a Ubuntu virtual machine using the specifications above. You can also give this virtual machine a "Hostname" of your choice. Once this Droplet is created, you can then assign a different firewall to allow all TCP and UDP connections to this Ubuntu virtual machine coming from all inbound traffic:
+
+![image](https://github.com/user-attachments/assets/d2b55ecb-e949-4ed6-8f61-9dee01f66b15)
+
+Assign this firewall to the Droplet that you just created. Once this is done, you can connect to your Droplet using the command "ssh root@<public-ip-for-ubuntu>":
+
+![image](https://github.com/user-attachments/assets/3a93d397-d88c-46ca-9aad-5f8fae0a7c83)
+
+To install a Wazuh agent on the Ubuntu virtual machine, head over to the Wazuh dashboard, then to "Endpoints Summary", and click "Deploy new agent". Select "DEB amd64" as the package and insert an agent name for this:
+
+![image](https://github.com/user-attachments/assets/d5e3f870-bb89-495a-b9ed-074c41583ea7)
+
+You can then run the following commands on the Ubuntu terminal to install the Wazuh agent:
+
+wget https://packages.wazuh.com/4.x/apt/pool/main/w/wazuh-agent/wazuh-agent_4.9.0-1_amd64.deb && sudo WAZUH_MANAGER='64.227.35.242' WAZUH_AGENT_NAME='GOAT' dpkg -i ./wazuh-agent_4.9.0-1_amd64.deb
+
+Once the agent is installed, you can enable and start the agent using the following commands:
+
+sudo systemctl daemon-reload
+
+sudo systemctl enable wazuh-agent
+
+sudo systemctl start wazuh-agent
+
+To check if the agent is running, you can use the "sudo systemctl status wazuh-agent" command:
+
+![image](https://github.com/user-attachments/assets/a304a3c2-1516-403e-97aa-32de4e38dcf7)
+
+
+Next, head back to the Shuffle workflow. On the workflow, drag the "Http" app icon. Click on the "HTTP" app icon and rename it to "Get-API". On "Find Actions", select "Curl". In the "Statement" section, type the following:
+
+curl -u USER:PASSWORD -k -X GET "https://WAZUH-IP:55000/security/user/authenticate?raw=true"
+
+Ensure that the username and password for the Wazuh API account are in the "USER:PASSWORD" part of the statement. In addition, ensure that the IP address for your Wazuh Manager is included in this statement: 
+
+![image](https://github.com/user-attachments/assets/8ae378dd-2846-4993-8fbe-480f235cfd24)
+
+![image](https://github.com/user-attachments/assets/3f109b58-aaae-49bc-a390-edbf879034a3)
+
+Ensure that for your Ubuntu virtual machine, port 55000 is open for all IP addresses. Save the workflow and activate the Wazuh app and drag it to the workflow:
+
+![image](https://github.com/user-attachments/assets/9f7b214e-5818-41dc-902a-d7ab2e6ba2b3)
+
+The nodes for the workflow are removed as shown above due to the implementation of another virtual machine. Click on the Wazuh icon and ensure that the "Find Actions" is on "Run command":
+
+![image](https://github.com/user-attachments/assets/54294dd0-e907-4307-8768-a9c19ed05b70)
+
+As for the API key, the "Get-API" icon will be connected to the Wazuh app. To do this, the "Wazuh-Alerts" should be connected to "Get-API" which is then connected to "VirusTotal" which in turn is connected to "Wazuh_1":
+
+![image](https://github.com/user-attachments/assets/73d68dad-e9a8-472e-bd04-1b61d0033114)
+
+Next, click on the "Wazuh_1" icon. For the "Apikey", click the "+" button and select "Get-API". For the "Url", put in the public IP address of your Wazuh Manager: 
+
+![image](https://github.com/user-attachments/assets/9bc7dbd7-7435-4427-820c-1d8beb73f9a8)
 
 
 
