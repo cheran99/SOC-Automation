@@ -909,8 +909,17 @@ To check if the agent is running, you can use the "sudo systemctl status wazuh-a
 
 ![image](https://github.com/user-attachments/assets/a304a3c2-1516-403e-97aa-32de4e38dcf7)
 
+Head over to the Wazuh dashboard to ensure the agent is installed successfully:
 
-Next, head back to the Shuffle workflow. On the workflow, drag the "Http" app icon. Click on the "HTTP" app icon and rename it to "Get-API". On "Find Actions", select "Curl". In the "Statement" section, type the following:
+![image](https://github.com/user-attachments/assets/aa5042c7-7f87-4ef0-9b14-8c17844b2c96)
+
+As shown above, the Wazuh agent for the Ubuntu virtual machine is successfully installed. 
+
+On a side note, if you don't see the agent on the dashboard, it may be because the outbound connection from the Wazuh agent to the Wazuh manager is blocked by the firewall. To rectify this, go to the firewall settings that were specifically set for the Wazuh Manager and TheHive on Digital Ocean and add the rules that allow inbound traffic from the Ubuntu machine:
+
+![image](https://github.com/user-attachments/assets/aa334392-f4fa-4402-ae82-3c493d92076d)
+
+Once the agent is installed, head back to the Shuffle workflow. On the workflow, drag the "Http" app icon. Click on the "HTTP" app icon and rename it to "Get-API". On "Find Actions", select "Curl". In the "Statement" section, type the following:
 
 curl -u USER:PASSWORD -k -X GET "https://WAZUH-IP:55000/security/user/authenticate?raw=true"
 
@@ -935,6 +944,28 @@ As for the API key, the "Get-API" icon will be connected to the Wazuh app. To do
 Next, click on the "Wazuh_1" icon. For the "Apikey", click the "+" button and select "Get-API". For the "Url", put in the public IP address of your Wazuh Manager: 
 
 ![image](https://github.com/user-attachments/assets/9bc7dbd7-7435-4427-820c-1d8beb73f9a8)
+
+Next, head over to the Wazuh manager and open the "ossec.conf" file using the "sudo nano /var/ossec/etc/ossec.conf". Once you have opened the file, scroll down to the "Active response" section. Once you are in this section, scroll down to the last part of this section which is titled "active-response":
+
+![image](https://github.com/user-attachments/assets/def12cdf-d235-4233-8793-db00732e1b42)
+
+Change this part shown above to the following configurations:
+
+<active-response>
+  
+  <command>firewall-drop</command>
+  
+  <location>local</location>
+
+  <level>5</level>
+
+  <timeout>no</timeout>
+  
+</active-response>
+
+![image](https://github.com/user-attachments/assets/caf6b234-7721-4171-9376-6acd6d28afa3)
+
+Save the file and restart the Wazuh Manager.
 
 
 
