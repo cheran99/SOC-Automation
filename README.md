@@ -967,6 +967,61 @@ Change this part shown above to the following configurations:
 
 Save the file and restart the Wazuh Manager.
 
+When it comes to APIs, if you are using active response, the command name appends the timeout to the name. For example, if you are using the "firewall-drop" command via API, the timeout option must be appended, for example, "firewall-drop0". The "0" in the command means that the timeout is 0 or there is no timeout. To test the name and see if the script is active, you would need to use a agent control binary. To do this, change the directory to the "/var/ossec/bin" using the " cd" command. Use the "ls" command to see if the agent control file is present:
+
+![image](https://github.com/user-attachments/assets/71839c4a-752d-4042-b229-95a72ef96060)
+
+Next, type "./agent_control" to see the options:
+
+![image](https://github.com/user-attachments/assets/149a99ae-5961-49b3-a76d-07172033934d)
+
+You can use the "-L" to see the available active responses:
+
+![image](https://github.com/user-attachments/assets/c9e2f12b-5056-4726-87c3-6902c59b4953)
+
+As shown above, the "firewall-drop0" is the response name required to use the API.
+
+Next, the agent control is going to be used to block an IP address using "firewall-drop0" as the active response using the following command:
+
+./agent_control -b <ip-address> -f firewall-drop0 -u <agent-id>
+
+The IP address that will be blocked is Google's public DNS which is "8.8.8.8". The "agent-id" is the ID number for the Wazuh agent on the Ubuntu virtual machine which is "002". The command should look something like this:
+
+./agent_control -b 8.8.8.8 -f firewall-drop0 -u 002
+
+Before running this command, you should ping the Google DNS on the Ubuntu virtual machine:
+
+![image](https://github.com/user-attachments/assets/3d874d08-3abd-4225-856c-ed91ae830cab)
+
+This shows the pinging is successful. Now run the agent control command on the Wazuh Manager:
+
+![image](https://github.com/user-attachments/assets/80c60691-61f9-44d8-a79d-60dd39f7850f)
+
+The active response is running which therefore stopped the pinging on the Ubuntu virtual machine (Wazuh agent).
+
+When you run the "iptables --list" command on the Wazuh agent, this drops the Google DNS responses:
+
+![image](https://github.com/user-attachments/assets/f7d89f78-c5cc-4b32-a9c2-e84f75ab8e69)
+
+To check if the active response was successful, on the Wazuh agent, change the directory to "/var/ossec/logs/" using the "cd" command. Use the "ls" command to see if the active responses log file is there. Then use the "cat" command to check the logs:
+
+![image](https://github.com/user-attachments/assets/e5864fa1-4b7c-4889-a888-72df3877e906)
+
+The logs at the bottom show that the active response was successful.
+
+Next, go to Shuffle, click on the "Wazuh 1" app icon, and add the following configurations:
+
+Agents list: $exec.all_fields.agent.id
+
+Wait for complete: true
+
+Arguments: ["8.8.8.8"]
+
+Command: "firewall-drop0"
+
+Save the workflow and then go to the person icon to test the workflow.
+
+
 
 
 ## Reference
