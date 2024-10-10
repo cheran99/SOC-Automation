@@ -1019,7 +1019,42 @@ Arguments: ["8.8.8.8"]
 
 Command: "firewall-drop0"
 
-Save the workflow and then go to the person icon to test the workflow.
+Save the workflow and then go to the person icon to test the workflow. Unfortunately upon testing the workflow, the actions were skipped on "Wazuh 1" because it is not under the start node:
+
+![image](https://github.com/user-attachments/assets/15255090-efca-4bc1-a97b-1b30d100a156)
+
+When you look at the active response logs on the Ubuntu machine, it says it cannot read the source IP from the data:
+
+![image](https://github.com/user-attachments/assets/eb76e11c-964b-459c-9fec-98c05a69f78f)
+
+To fix this, the "SHA256 Regex" icon needs to be connected to the workflow since it is the starting node:
+
+![image](https://github.com/user-attachments/assets/3e6effd9-181f-4d91-b888-9751998344a9)
+
+Next, click on the "Wazuh 1" icon, remove what you put under the "Arguments" section and instead insert the following under the "Alerts" section:
+
+{"data": {"srcip": "8.8.8.8"}}
+
+Save the workflow and test it:
+
+![image](https://github.com/user-attachments/assets/23219204-e191-4d65-86e7-523e1768c90b)
+
+This shows that the test did not skip action on "Wazuh 1" and as a result, the test was successful. To see if the active response was successful, you can run the "cat" command on the Ubuntu virtual machine to check the logs:
+
+![image](https://github.com/user-attachments/assets/e1983d17-0f12-4a2d-a1b9-6baed78afa0e)
+
+Since it could read the source IP from the data, the active response using "firewall-drop0" was successful. The IP address for the Google DNS is in the alert itself. 
+
+The next step is to add "User Input" to the workflow so that an email concerning a brute force attempt to the Ubuntu virtual machine is sent to the SOC analyst. This will give the SOC analyst the option to block the source IP. If the user decides to block the IP address, then Wazuh will instruct the Ubuntu virtual machine to block the IP address. 
+
+Once you have added the "User Input" to the workflow, click on its icon and in the "Information" section add the following message:
+
+Would you like to block this source IP: $exec.all_fields.data.srcip
+
+For "Input options", choose email as the option and insert the email address that you want the email sent to be sent to:
+
+![image](https://github.com/user-attachments/assets/ff8b15c0-b143-4232-aad7-322c35a837bd)
+
 
 
 
