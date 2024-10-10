@@ -1055,7 +1055,27 @@ For "Input options", choose email as the option and insert the email address tha
 
 ![image](https://github.com/user-attachments/assets/ff8b15c0-b143-4232-aad7-322c35a837bd)
 
+Next, click on the "Wazuh 1" icon and change the "Alert" section to:
 
+{"data": {"srcip": "$exec.all_fields.data.srcip"}}
+
+The reason for this change is because the source IP is no longer going to be a static IP. Instead, the alerts are going to be generated whenever there is a connection attempt coming from any inbound traffic hence this change.  
+
+Let's connect the "User Input 1" to the rest of the workflow:
+
+![image](https://github.com/user-attachments/assets/9897456b-0c9e-426f-8a6d-7984fb0da379)
+
+Save the workflow and head over to the person icon to test it:
+
+![image](https://github.com/user-attachments/assets/999c7f9f-2e62-4b18-aff7-8659b73052cf)
+
+After successfully running the workflow, the output for "User Input 1" shows that it is waiting for user input:
+
+![image](https://github.com/user-attachments/assets/4ebc2e1a-1fcf-4122-afc1-9406936fd521)
+
+When you log in to the email, you can see that an email regarding a connection attempt to the Ubuntu virtual machine has been sent and you have the option to either block or allow the source IP:
+
+![image](https://github.com/user-attachments/assets/e6dc4cbc-4f8c-468a-91e6-51d5cd33fb2a)
 
 
 
