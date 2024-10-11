@@ -871,7 +871,11 @@ When you run Mimikatz on the Windows virtual machine a few more times, this crea
 
 ![image](https://github.com/user-attachments/assets/f277d327-8d5d-4db7-9134-dc0f4c219c79)
 
-This shows that the automation was successful. When you run Mimikatz on the Windows virtual machine, an alert is created for the Wazuh Manager. The hash is automatically extracted from the alert file and sent over to VirusTotal to check the reputation score. Once checked, VirusTotal returns the hash value and sends the information to both TheHive as an alert, and to the SOC analyst as an email for investigation.
+Additionally, more alerts are generated on TheHive:
+
+![image](https://github.com/user-attachments/assets/bd87caba-da7f-40cc-8e9e-870b141eb47a)
+
+This shows that the automation was successful. When you run Mimikatz on the Windows virtual machine, an alert is created for the Wazuh Manager. The hash is automatically extracted from the alert file and sent over to VirusTotal to check the reputation score. Once checked, VirusTotal returns the hash value and sends the information to both TheHive as an alert, and to the SOC analyst as an email for investigation. 
 
 ### Step 13: Implement Another Wazuh Agent to Shuffle
 
