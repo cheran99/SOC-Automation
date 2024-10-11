@@ -1009,6 +1009,14 @@ To check if the active response was successful, on the Wazuh agent, change the d
 
 The logs at the bottom show that the active response was successful.
 
+On the Wazuh Dashboard, go to "Discover", then select "wazuh-alerts-*" as the index pattern. You will see a log for the active response:
+
+![image](https://github.com/user-attachments/assets/866c0076-6720-407c-b18f-d9c8ed013ed8)
+
+When you expand this particular event on the log, you can see the source IP that was blocked and also a rule description that shows that the "Host was blocked by firewall-drop Active Response":
+
+![image](https://github.com/user-attachments/assets/6ac1a29c-9897-489d-bee4-bc6ef8dbec2d)
+
 Next, go to Shuffle, click on the "Wazuh 1" app icon, and add the following configurations:
 
 Agents list: $exec.all_fields.agent.id
@@ -1075,7 +1083,11 @@ After successfully running the workflow, the output for "User Input 1" shows tha
 
 When you log in to the email, you can see that an email regarding a connection attempt to the Ubuntu virtual machine has been sent and you have the option to either block or allow the source IP:
 
-![image](https://github.com/user-attachments/assets/e6dc4cbc-4f8c-468a-91e6-51d5cd33fb2a)
+![image](https://github.com/user-attachments/assets/5ce42c97-9cad-4d37-b29a-6f17c72ef996)
+
+If you want to block the IP address, you can select the link for "True" and this will take you to the Shuffle page where it has already answered on your behalf to block the source IP:
+
+![image](https://github.com/user-attachments/assets/d073b9b7-591f-421c-a716-2d081456d87d)
 
 
 
