@@ -1051,9 +1051,9 @@ This shows that the test did not skip action on "Wazuh 1" and as a result, the t
 
 ![image](https://github.com/user-attachments/assets/e1983d17-0f12-4a2d-a1b9-6baed78afa0e)
 
-Since it could read the source IP from the data, the active response using "firewall-drop0" was successful. The IP address for the Google DNS is in the alert itself. 
+Since it could read the source IP from the data, the active response using "firewall-drop0" was successful. The IP address for the Google DNS is in the alert itself. As a result, the source IP was automatically blocked by the "firewall-drop" active response.
 
-The next step is to add "User Input" to the workflow so that an email concerning a brute force attempt to the Ubuntu virtual machine is sent to the SOC analyst. This will give the SOC analyst the option to block the source IP. If the user decides to block the IP address, then Wazuh will instruct the Ubuntu virtual machine to block the IP address. 
+The next step is to add "User Input" to the workflow so that an email concerning a brute force attempt to the Ubuntu virtual machine is sent to the SOC analyst. This will give the SOC analyst the option to block the source IP. If the user decides to block the IP address, then Wazuh will instruct the Ubuntu virtual machine to block the IP address using the "firewall-drop" active response. 
 
 Once you have added the "User Input" to the workflow, click on its icon and in the "Information" section add the following message:
 
