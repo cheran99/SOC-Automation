@@ -1,8 +1,13 @@
 # SOC-Automation
 
+## Introduction
+
+The aim of this SOC Automation project is to implement an automated system that connects the Wazuh Manager and TheHive servers to the Wazuh agents and SOC analysts by integrating a streamlined SOAR workflow. This is to simulate real-world attack scenarios that allow the SOC analyst to efficiently take responsive actions to these security incidents whilst enhancing response times and overall effectiveness in handling threats.  
+
 ## Objectives
-- Create a Wazuh instance
-- Integrate SOAR
+- Create Wazuh instances for both the Wazuh Manager and TheHive
+- Implement a Windows 10 (with Sysmon installed) virtual machine to act as the client machine and Wazuh agent 
+- Integrate a streamlined SOAR workflow 
 - Create a fully functional case management system using TheHive
 
 ## Set Up
@@ -17,7 +22,7 @@ The virtual machines used in this project are the following:
 
 ### Step 1: Install Windows 10 Virtual Machine
 
-The first step is downloading a virtual machine platform such as VirtualBox or VMWare. In this project, VirtualBox is used as a platform.
+The first step is to download a virtual machine platform such as VirtualBox or VMWare. In this project, VirtualBox is used as a platform.
 
 Once VirtualBox is downloaded, the next step is to download the ISO image for Windows 10. To do this, download the ISO file from the official Microsoft website.
 
