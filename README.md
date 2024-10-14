@@ -911,7 +911,7 @@ This shows that the automation was successful. When you run Mimikatz on the Wind
 
 ### Step 13: Implement Another Wazuh Agent to Shuffle
 
-Since the automation in the previous steps was successful when it came to running Mimikatz, in this step, another virtual machine is going to be implemented to act as a Wazuh agent to generate alerts that detect any brute force activity through SSH from all inbound traffic. The user input will also be implemented so that the user has the option to block the source IP. The virtual machine used in this are the following:
+Since the automation in the previous steps was successful when it came to running Mimikatz, in this step, another virtual machine is going to be implemented to act as a Wazuh agent to generate alerts that detect any brute force activity through SSH from all inbound traffic. The user input will also be implemented so that the user has the option to block the source IP using the "firewall-drop" active response. The virtual machine used in this are the following:
 
 - Operating system: Ubuntu 22.04
 - Memory: 1GB
@@ -974,7 +974,7 @@ The nodes for the workflow are removed as shown above due to the implementation 
 
 ![image](https://github.com/user-attachments/assets/54294dd0-e907-4307-8768-a9c19ed05b70)
 
-As for the API key, the "Get-API" icon will be connected to the Wazuh app. To do this, the "Wazuh-Alerts" should be connected to "Get-API" which is then connected to "VirusTotal" which in turn is connected to "Wazuh_1":
+As for the API key, the "Get-API" icon will be connected to the Wazuh app. To do this, the "Wazuh-Alerts" should be connected to "Get-API" which is then connected to "VirusTotal" which in turn is connected to "Wazuh 1":
 
 ![image](https://github.com/user-attachments/assets/73d68dad-e9a8-472e-bd04-1b61d0033114)
 
@@ -1005,7 +1005,7 @@ Change this part shown above to the following configurations:
 
 Save the file and restart the Wazuh Manager.
 
-When it comes to APIs, if you are using active response, the command name appends the timeout to the name. For example, if you are using the "firewall-drop" command via API, the timeout option must be appended, for example, "firewall-drop0". The "0" in the command means that the timeout is 0 or there is no timeout. To test the name and see if the script is active, you would need to use a agent control binary. To do this, change the directory to the "/var/ossec/bin" using the " cd" command. Use the "ls" command to see if the agent control file is present:
+When it comes to APIs, if you are using active response, the command name appends the timeout to the name. For example, if you are using the "firewall-drop" command via API, the timeout option must be appended, for example, "firewall-drop0". The "0" in the command means that the timeout is 0 or there is no timeout. To test the name and see if the script is active, you would need to use an agent control binary. To do this, change the directory to the `/var/ossec/bin` using the `cd` command. Use the `ls` command to see if the agent control file is present:
 
 ![image](https://github.com/user-attachments/assets/71839c4a-752d-4042-b229-95a72ef96060)
 
@@ -1013,11 +1013,11 @@ Next, type `./agent_control` to see the options:
 
 ![image](https://github.com/user-attachments/assets/149a99ae-5961-49b3-a76d-07172033934d)
 
-You can use the "-L" to see the available active responses:
+You can use the `-L` option to see the available active responses:
 
 ![image](https://github.com/user-attachments/assets/c9e2f12b-5056-4726-87c3-6902c59b4953)
 
-As shown above, the "firewall-drop0" is the response name required to use the API.
+As shown above, the `firewall-drop0` is the response name required to use the API.
 
 Next, the agent control is going to be used to block an IP address using "firewall-drop0" as the active response using the following command:
 
@@ -1041,7 +1041,7 @@ When you run the "iptables --list" command on the Wazuh agent, this drops the Go
 
 ![image](https://github.com/user-attachments/assets/f7d89f78-c5cc-4b32-a9c2-e84f75ab8e69)
 
-To check if the active response was successful, on the Wazuh agent, change the directory to "/var/ossec/logs/" using the "cd" command. Use the "ls" command to see if the active responses log file is there. Then use the "cat" command to check the logs:
+To check if the active response was successful, on the Wazuh agent, change the directory to `/var/ossec/logs/` using the `cd` command. Use the `ls` command to see if the active responses log file is there. Then use the `cat` command to check the logs:
 
 ![image](https://github.com/user-attachments/assets/e5864fa1-4b7c-4889-a888-72df3877e906)
 
@@ -1086,7 +1086,7 @@ Save the workflow and test it:
 
 ![image](https://github.com/user-attachments/assets/23219204-e191-4d65-86e7-523e1768c90b)
 
-This shows that the test did not skip action on "Wazuh 1" and as a result, the test was successful. To see if the active response was successful, you can run the "cat" command on the Ubuntu virtual machine to check the logs:
+This shows that the test did not skip action on "Wazuh 1" and as a result, the test was successful. To see if the active response was successful, you can run the `cat` command on the Ubuntu virtual machine to check the logs:
 
 ![image](https://github.com/user-attachments/assets/e1983d17-0f12-4a2d-a1b9-6baed78afa0e)
 
@@ -1096,7 +1096,7 @@ The next step is to add "User Input" to the workflow so that an email concerning
 
 Once you have added the "User Input" to the workflow, click on its icon and in the "Information" section add the following message:
 
-Would you like to block this source IP: $exec.all_fields.data.srcip
+`Would you like to block this source IP: $exec.all_fields.data.srcip`
 
 For "Input options", choose email as the option and insert the email address that you want the email sent to be sent to:
 
@@ -1127,6 +1127,10 @@ When you log in to the email, you can see that an email regarding a connection a
 If you want to block the IP address, you can select the link for "True" and this will take you to the Shuffle page where it has already answered on your behalf to block the source IP:
 
 ![image](https://github.com/user-attachments/assets/d073b9b7-591f-421c-a716-2d081456d87d)
+
+Overall, this shows that this automated workflow system is successful. When there is a SSH login attempt to the Ubuntu virtual machine, the Wazuh Manager detects and generates an alert. The hash value of the alert is parsed by the "SHA256 Regex" before being sent over to Virustotal to check the reputation score of this particular hash. Before the request to block the source IP using the "firewall-drop" active response is sent to "Wazuh 1", an email with the information of the alert is sent to the SOC analyst to review the details of this alert. The SOC analyst then has the option to either block the source IP or accept its connection. If the SOC analyst clicks the link to block the source IP, Shuffle will automatically send that request to "Wazuh 1" to automatically block it using the "firewall-drop" active response. Without the "User Input" in the workflow, any SSH login attempts coming from any inbound traffic will automatically be blocked. 
+
+## Conclusions
 
 
 
