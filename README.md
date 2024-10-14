@@ -1132,6 +1132,9 @@ Overall, this shows that this automated workflow system is successful. When ther
 
 ## Conclusions
 
+### Critical Reflection
+
+There were a lot of challenges experienced in this project. The first challenge was the implementation of the Ubuntu virtual machines. The cost effective option would have been to download the ISO image for Ubuntu and create each virtual machine for both the Wazuh Manager and TheHive and run it on VirtualBox. However, the issue with this is that the performance of virtual machines is dependent on the hardware specifications of the machine that runs the VMs. For example, if the specification of an Ubuntu virtual machine is 8GB RAM and 50GB storage, then 8GB of the hardware RAM and 50GB of hardrive needs to be allocated to this virtual machine for it to run. In this project, since more than one virtual machine is being run and because of the minimum specification requirements for the Wazuh Manager and TheHive, the use of virtual machines through VirtualBox or VMWare is not the ideal option because if you run the virtual machines simultaneously this way, this can lead to the machine to crash. As a consequence of this, this can disrupt the automated workflow. To avoid this situation, the client machine to act as the Wazuh agent is used as a virtual machine while the cloud virtual machines are used for the Wazuh Manager and TheHive. This approach is costly due to the costs set by the cloud providers. If your aim is to be within the budget, the best course of action is to sign up to a new account through a referral link to claim free credits worth about $200. Digital Ocean offers this, however, the credits are only valid for a limited time. 
 
 
 ## Reference
