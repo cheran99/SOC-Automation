@@ -1140,7 +1140,7 @@ Another challenge that occurred during the process was the integration of anothe
 
 ### Summary
 
-To conclude, an automated SOAR workflow was successfully implemented to automatically generate alerts and send an email to the SOC analyst to promptly take responsive actions whenever there is a malicious program such as Mimikatz is in use. Additionally, the SOAR workflow can also detect and generate alerts and send an email to the SOC analyst whenever an SSH login attempt comes from any inbound traffic to the Ubuntu virtual machine. This email gives the SOC analyst the option to either block or allow the source IP with just one click. 
+To conclude, an automated SOAR workflow was successfully implemented to automatically generate alerts and send an email to the SOC analyst to promptly take responsive actions whenever there is a malicious program such as Mimikatz is in use. Additionally, the SOAR workflow can also detect and generate alerts and send an email to the SOC analyst whenever an SSH login attempt comes from any inbound traffic to the Ubuntu virtual machine (Wazuh agent). This email gives the SOC analyst the option to either block or allow the source IP with just one click. 
 
 
 ## Reference
